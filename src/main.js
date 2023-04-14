@@ -27,20 +27,27 @@ for (idx_files = 0; idx_files < TO_BE_CHANGED_FILES.length; idx_files++) {
         
         const newFileName = newLabels[FILE_ID] + extension
         
-        fs.renameSync(
-            `${SETTINGS.FILES_FILEPATH}${actualFileName}`,
-            `${SETTINGS.FILES_FILEPATH}${newFileName}`
-        )
-
-        //append log to file 
-        const log_entry = `File changed: \"${actualFileName}\" --> \"${newFileName}\"`
-        fs.writeFileSync(
-            `${SETTINGS.LOG_FILEPATH}${SETTINGS.LOG_NAME}`,
-            `${log_entry}\r\n`,
-            {flag: `a`}
-        )
-        console.log(log_entry)
+        let log_entry = "";
+        if(`${SETTINGS.FILES_FILEPATH}${actualFileName}` == `${SETTINGS.FILES_FILEPATH}${newFileName}`) {
+            log_entry = `File already renamed: \"${actualFileName}\"`
+        } else {
+            fs.renameSync(
+                `${SETTINGS.FILES_FILEPATH}${actualFileName}`,
+                `${SETTINGS.FILES_FILEPATH}${newFileName}`
+            )
+            log_entry = `File changed: \"${actualFileName}\" --> \"${newFileName}\"`
+        }
+        log(log_entry)
     }   
+}
+
+function log(log_entry) {
+    fs.writeFileSync(
+        `${SETTINGS.LOG_FILEPATH}${SETTINGS.LOG_NAME}`,
+        `${log_entry}\r\n`,
+        {flag: `a`}
+    )
+    console.log(log_entry)
 }
 
 function shouldFileBeRenamed(fileName) {
